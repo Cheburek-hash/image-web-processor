@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="image tools">
+        <div class="image-settings">
+            <h3>File</h3>
+            <form id="form" action="#" method="post" enctype="multipart/form-data">
+                <input type="file" id="img" multiple accept="image/*" name="img"/>
+            </form>
+        </div>
+
+        <div class="image-tools">
+            <h3>Options</h3>
+            <button type="button" onclick="ImageOptions.cutting();"><i class="fas fa-cut"></i></button>
+            <button type="button" onclick="ImageOptions.scale();"><i class="fas fa-search-plus"></i></i></button>
+            <button type="button" onclick="ImageOptions.resize();"><i class="fas fa-expand"></i></i></i></button>
+        </div>
+        <div class="image-functions">
+            <h3>Functions</h3>
+            <button type="button" class="img-func apply" onclick="core.apply();">Apply</button>
+            <button type="button" class="img-func reset" onclick="core.reset();">Reset</button>
+            <button type="button" class="img-func remove" onclick="localStorage.clear(); document.querySelector('.wrapper').classList.remove('flex');cvs.classList.remove('large-canvas');cvs.classList.add('default-canvas'); location.reload();">Remove</button>
+            <button type="button" class="img-func download" onclick="core.save();">Download</button>
+        </div>
+
+    </div>
+    <canvas class="default-canvas">
+        Canvas did not supported
+    </canvas>
+    <footer>
+        <h2>some footer</h2>
+    </footer>
+</div>
+
+
+<script src="js/jquery.js"></script>
+<script type="text/javascript" src="js/fontawesome.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>
