@@ -49,7 +49,7 @@ class Core {
                 location.reload()
                 break;
             case 'resize':
-                let _buffer = ctx.getImageData(scaleSelection.x, scaleSelection.y, scaleSelection.w, scaleSelection.h);
+                let _buffer = ctx.getImageData(scaleSelection.x, scaleSelection.y, scaleSelection.w + offsetX, scaleSelection.h + offsetY);
                 this.resize_cvs(scaleSelection.w + offsetX, scaleSelection.h + offsetY);
                 ctx.putImageData(_buffer, 0,0)
                 this.localSave();
@@ -62,11 +62,14 @@ class Core {
         localStorage.setItem('img-data', this.cvs.toDataURL('image/png'))
     }
     save() {
+        this.apply();
         const link = document.createElement('a');
-        link.setAttribute('href', this.cvs.toDataURL('image/png'));
-        link.setAttribute('download', 'image.png');
-        link.click();
-        return false;
+            link.setAttribute('href', this.cvs.toDataURL('image/png'));
+            link.setAttribute('download', 'image.png');
+            link.click();
+            return false;
+
+
     }
     setImageSrc() {
         const input = document.querySelector('#img');
@@ -82,7 +85,7 @@ class Core {
         }
     }
     canvas_arrow(context, fromx, fromy, tox, toy) {
-        const headlen = 5; // length of head in pixels
+        const headlen = 5;
         const dx = tox - fromx;
         const dy = toy - fromy;
         const angle = Math.atan2(dy, dx);
@@ -95,7 +98,8 @@ class Core {
 }
 
 class ImageOptions {
-
+    static cvs_offsetW = (window.innerWidth - core.image.image.naturalWidth)/2;
+    static cvs_offsetH = (window.innerHeight - core.image.image.naturalHeight)/2;
     static cutting() {
         selection = {};
         type = 'cut';
@@ -106,11 +110,10 @@ class ImageOptions {
     static resize(){
         type = 'resize';
         ctx.lineWidth = 5;
-        const cvs_offsetW = (window.innerWidth - core.image.image.naturalWidth)/2;
-        const cvs_offsetH = (window.innerHeight - core.image.image.naturalHeight)/2;
 
-        core.resize_cvs(window.innerWidth - cvs_offsetW, window.innerHeight - cvs_offsetH)
-        scaleSelection.x = (window.innerWidth - cvs_offsetW)/2-(core.image.image.width/2); scaleSelection.y = (window.innerHeight-cvs_offsetH)/2-(core.image.image.height/2); scaleSelection.w = core.image.image.naturalWidth; scaleSelection.h = core.image.image.naturalHeight;
+
+        core.resize_cvs(window.innerWidth - this.cvs_offsetW, window.innerHeight - this.cvs_offsetH)
+        scaleSelection.x = (window.innerWidth - this.cvs_offsetW)/2-(core.image.image.width/2); scaleSelection.y = (window.innerHeight-yhis.cvs_offsetH)/2-(core.image.image.height/2); scaleSelection.w = core.image.image.naturalWidth; scaleSelection.h = core.image.image.naturalHeight;
         core.image.update(scaleSelection.x, scaleSelection.y);
        // ctx.strokeRect(scaleSelection.x,scaleSelection.y, scaleSelection.w, scaleSelection.h);
         cvs.addEventListener('mousedown', mousedown, false);
@@ -119,11 +122,10 @@ class ImageOptions {
         selection = {};
         type = 'scale';
         ctx.lineWidth = 8;
-        const cvs_offsetW = (window.innerWidth - core.image.image.naturalWidth)/2;
-        const cvs_offsetH = (window.innerHeight - core.image.image.naturalHeight)/2;
 
-        core.resize_cvs(window.innerWidth - cvs_offsetW, window.innerHeight - cvs_offsetH)
-        scaleSelection.x = (window.innerWidth - cvs_offsetW)/2-(core.image.image.width/2); scaleSelection.y = (window.innerHeight-cvs_offsetH)/2-(core.image.image.height/2); scaleSelection.w = core.image.image.naturalWidth; scaleSelection.h = core.image.image.naturalHeight;
+
+        core.resize_cvs(window.innerWidth - this.cvs_offsetW, window.innerHeight - this.cvs_offsetH)
+        scaleSelection.x = (window.innerWidth - this.cvs_offsetW)/2-(core.image.image.width/2); scaleSelection.y = (window.innerHeight-this.cvs_offsetH)/2-(core.image.image.height/2); scaleSelection.w = core.image.image.naturalWidth; scaleSelection.h = core.image.image.naturalHeight;
 
         core.image.update(scaleSelection.x, scaleSelection.y);
         ctx.strokeRect(scaleSelection.x,scaleSelection.y, scaleSelection.w, scaleSelection.h);
@@ -206,8 +208,8 @@ const mousedown = e => {
 
             click++;
 
-            let cell_w = Math.ceil(scaleSelection.w/3);
-            let cell_h =  Math.ceil(scaleSelection.h/3);
+            let cell_w = Math.floor(scaleSelection.w/3);
+            let cell_h =  Math.floor(scaleSelection.h/3);
 
 
 
@@ -260,7 +262,6 @@ const mousedown = e => {
                     core.image.scale(offsetX, offsetY)
                 }
             }
-
             ctx.strokeRect(scaleSelection.x,scaleSelection.y, scaleSelection.w, scaleSelection.h);
 
             break;
@@ -290,13 +291,14 @@ const mousedown = e => {
             if ((selection.x > scaleSelection.x - (collisionOffset + (arrowLength + arrowOffset)) && selection.x < scaleSelection.x + arrowLength) ){
                 offsetX -= stepResize;
                 core.image.resize(offsetX, offsetY)
-            } else if ((selection.x > scaleSelection.x + scaleSelection.w - arrowLength + (collisionOffset + arrowOffset + (arrowLength - arrowOffset)) && selection.x < scaleSelection.x + scaleSelection.w + arrowLength + collisionOffset + arrowOffset + (arrowLength - arrowOffset)) && (selection.y > scaleSelection.y + scaleSelection.h / 2 - collisionOffset && selection.y <  scaleSelection.y + scaleSelection.h / 2 + collisionOffset)){
+            } else if ((selection.x > scaleSelection.x + scaleSelection.w - arrowLength + (collisionOffset + arrowOffset + (arrowLength - arrowOffset)) && selection.x < scaleSelection.x + scaleSelection.w + arrowLength + collisionOffset + arrowOffset + (arrowLength - arrowOffset)) && (selection.y > scaleSelection.y + scaleSelection.h / 2 - collisionOffset && selection.y <  scaleSelection.y + scaleSelection.h / 2 + collisionOffset)) {
                 offsetX += stepResize;
-                core.image.resize(offsetX, offsetY)
+                core.image.resize(offsetX, offsetY);
             }
-            //ctx.strokeRect(scaleSelection.x - (collisionOffset + (arrowLength + arrowOffset)), scaleSelection.y + scaleSelection.h / 2 - collisionOffset, arrowLength + collisionOffset + arrowOffset,  collisionOffset*2);
-            //ctx.strokeRect(scaleSelection.x + scaleSelection.w - arrowLength + (collisionOffset + arrowOffset + (arrowLength - arrowOffset)), scaleSelection.y + scaleSelection.h / 2 - collisionOffset, arrowLength + collisionOffset + arrowOffset,  collisionOffset*2);
-
+            // } else if (() && ()){
+            //     offsetY += stepResize;
+            //     core.image.resize(offsetX, offsetY);
+            // }
             // y - arrows
 
             ctx.strokeRect(scaleSelection.x + scaleSelection.w / 2 - collisionOffset, scaleSelection.y - collisionOffset - arrowLength - arrowOffset, collisionOffset * 2,  arrowLength + arrowOffset);
