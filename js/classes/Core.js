@@ -67,7 +67,8 @@ class Core {
             console.log('Ошибка файла')
         }
     }
-    canvas_arrow(context, fromx, fromy, tox, toy) {
+    //Primitives
+    _arrow(context, fromx, fromy, tox, toy) {
         const headlen = 5;
         const dx = tox - fromx;
         const dy = toy - fromy;
@@ -78,4 +79,53 @@ class Core {
         context.moveTo(tox, toy);
         context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
     }
+    _mesh(selection, scaleSelection){
+        let cell_w = Math.floor(scaleSelection.w / 3);
+        let cell_h = Math.floor(scaleSelection.h / 3);
+
+        for (let y = cell_h; y <= scaleSelection.h + 1; y += cell_h) {
+            for (let x = cell_w; x <= scaleSelection.w + 1; x += cell_w) {
+                ctx.strokeRect(scaleSelection.x, scaleSelection.y, x, y)
+            }
+        }
+        /**
+         * Canvas blocks collisions
+         */
+        if ((selection.x > scaleSelection.x && selection.x < scaleSelection.x + scaleSelection.w) && (selection.y > scaleSelection.y && selection.y < scaleSelection.y + scaleSelection.h)) {
+            if ((selection.x > scaleSelection.x + cell_w && selection.x < scaleSelection.x + cell_w * 2) && (selection.y > scaleSelection.y + cell_h && selection.y < scaleSelection.y + cell_h * 2) && click % 2 === 0) {
+                cvs.addEventListener('mousemove', mousemove, false);
+            } else if ((selection.x > scaleSelection.x && selection.x < scaleSelection.x + cell_w) && (selection.y > scaleSelection.y && selection.y < scaleSelection.y + cell_h)) {
+                offsetY += stepScale;
+                offsetX += stepScale;
+                core.Image.scale(offsetX, offsetY);
+            } else if ((selection.x > scaleSelection.x + cell_w && selection.x < scaleSelection.x + cell_w * 2) && (selection.y > scaleSelection.y && selection.y < scaleSelection.y + cell_h)) {
+                offsetY += stepScale;
+                core.Image.scale(offsetX, offsetY);
+            } else if ((selection.x > scaleSelection.x + cell_w * 2 && selection.x < scaleSelection.x + cell_w * 3) && (selection.y > scaleSelection.y && selection.y < scaleSelection.y + cell_h)) {
+                offsetY -= stepScale;
+                offsetX -= stepScale;
+                core.Image.scale(offsetX, offsetY);
+            } else if ((selection.x > scaleSelection.x && selection.x < scaleSelection.x + cell_w) && (selection.y > scaleSelection.y + cell_h && selection.y < scaleSelection.y + cell_h * 2)) {
+                offsetX += stepScale;
+                core.Image.scale(offsetX, offsetY);
+            } else if ((selection.x > scaleSelection.x + cell_w * 2 && selection.x < scaleSelection.x + cell_w * 3) && (selection.y > scaleSelection.y + cell_h && selection.y < scaleSelection.y + cell_h * 2)) {
+                offsetX -= stepScale;
+                core.Image.scale(offsetX, offsetY);
+            } else if ((selection.x > scaleSelection.x && selection.x < scaleSelection.x + cell_w) && (selection.y > scaleSelection.y + cell_h * 2 && selection.y < scaleSelection.y + cell_h * 3)) {
+                offsetY += stepScale;
+                offsetX -= stepScale;
+                core.Image.scale(offsetX, offsetY);
+            } else if ((selection.x > scaleSelection.x + cell_w && selection.x < scaleSelection.x + cell_w * 2) && (selection.y > scaleSelection.y + cell_h * 2 && selection.y < scaleSelection.y + cell_h * 3)) {
+                offsetY -= stepScale;
+                core.Image.scale(offsetX, offsetY);
+            } else if ((selection.x > scaleSelection.x + cell_w * 2 && selection.x < scaleSelection.x + cell_w * 3) && (selection.y > scaleSelection.y + cell_h * 2 && selection.y < scaleSelection.y + cell_h * 3)) {
+                offsetX += stepScale;
+                offsetY -= stepScale;
+                core.Image.scale(offsetX, offsetY);
+            }
+        }
+        ctx.strokeRect(scaleSelection.x, scaleSelection.y, scaleSelection.w, scaleSelection.h);
+
+    }
+
 }
