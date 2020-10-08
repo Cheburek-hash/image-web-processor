@@ -4,15 +4,18 @@ const cvs = document.querySelector('.default-canvas');
 const ctx = cvs.getContext('2d');
 
 const image = new Image();
-let offsetX = 0;
-let offsetY = 0;
-let click = 0;
-let type;
-const stepScale = 10;
-const stepResize = 10;
-let selection = {};
-let scaleSelection = {x:0,y:0};
 
+
+let offsetX = 0,
+    offsetY = 0,
+    click = 0,
+    selection = {},
+    type;
+const stepScale = 10,
+      stepResize = 10,
+      scaleSelection = {x:0,y:0};
+
+if (localStorage.length > 0) cvs.removeEventListener('click', loadOnClick, false)
 class Core {
     constructor(cvs, w, h) {
         this.cvs = cvs;
@@ -20,6 +23,7 @@ class Core {
         this.h = h;
         this.cvs.width = this.w;
         this.cvs.height = this.h;
+
     }
     resize_cvs(w, h) {
         this.cvs.width = w;
@@ -29,6 +33,8 @@ class Core {
         localStorage.setItem('img-data', localStorage.getItem('img-data-original'))
         location.reload();
     }
+
+
     load() {
         this.image = new UserImage(image);
         this.image.update();
@@ -96,10 +102,13 @@ class Core {
         context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
     }
 }
+const core = new Core(cvs, window.innerWidth/2, window.innerHeight/2);
+
+
 
 class ImageOptions {
-    static cvs_offsetW = (window.innerWidth - core.image.image.naturalWidth)/2;
-    static cvs_offsetH = (window.innerHeight - core.image.image.naturalHeight)/2;
+
+
     static cutting() {
         selection = {};
         type = 'cut';
@@ -108,12 +117,12 @@ class ImageOptions {
 
     }
     static resize(){
+        const cvs_offsetW = (window.innerWidth - core.image.image.naturalWidth) / 2;
+        const cvs_offsetH = (window.innerHeight - core.image.image.naturalHeight) / 2;
         type = 'resize';
         ctx.lineWidth = 5;
-
-
-        core.resize_cvs(window.innerWidth - this.cvs_offsetW, window.innerHeight - this.cvs_offsetH)
-        scaleSelection.x = (window.innerWidth - this.cvs_offsetW)/2-(core.image.image.width/2); scaleSelection.y = (window.innerHeight-yhis.cvs_offsetH)/2-(core.image.image.height/2); scaleSelection.w = core.image.image.naturalWidth; scaleSelection.h = core.image.image.naturalHeight;
+        core.resize_cvs(window.innerWidth - cvs_offsetW, window.innerHeight - cvs_offsetH)
+        scaleSelection.x = (window.innerWidth - cvs_offsetW)/2-(core.image.image.width/2); scaleSelection.y = (window.innerHeight-cvs_offsetH)/2-(core.image.image.height/2); scaleSelection.w = core.image.image.naturalWidth; scaleSelection.h = core.image.image.naturalHeight;
         core.image.update(scaleSelection.x, scaleSelection.y);
        // ctx.strokeRect(scaleSelection.x,scaleSelection.y, scaleSelection.w, scaleSelection.h);
         cvs.addEventListener('mousedown', mousedown, false);
@@ -123,9 +132,11 @@ class ImageOptions {
         type = 'scale';
         ctx.lineWidth = 8;
 
+        const cvs_offsetW = (window.innerWidth - core.image.image.naturalWidth) / 2;
+        const cvs_offsetH = (window.innerHeight - core.image.image.naturalHeight) / 2;
 
-        core.resize_cvs(window.innerWidth - this.cvs_offsetW, window.innerHeight - this.cvs_offsetH)
-        scaleSelection.x = (window.innerWidth - this.cvs_offsetW)/2-(core.image.image.width/2); scaleSelection.y = (window.innerHeight-this.cvs_offsetH)/2-(core.image.image.height/2); scaleSelection.w = core.image.image.naturalWidth; scaleSelection.h = core.image.image.naturalHeight;
+        core.resize_cvs(window.innerWidth - cvs_offsetW, window.innerHeight - cvs_offsetH)
+        scaleSelection.x = (window.innerWidth - cvs_offsetW)/2-(core.image.image.width/2); scaleSelection.y = (window.innerHeight-cvs_offsetH)/2-(core.image.image.height/2); scaleSelection.w = core.image.image.naturalWidth; scaleSelection.h = core.image.image.naturalHeight;
 
         core.image.update(scaleSelection.x, scaleSelection.y);
         ctx.strokeRect(scaleSelection.x,scaleSelection.y, scaleSelection.w, scaleSelection.h);
@@ -159,20 +170,21 @@ class UserImage {
     }
 }
 
-const core = new Core(cvs, window.innerWidth/2, window.innerHeight/2);
 
 document.querySelector('#img').addEventListener('change', () => {
-    core.setImageSrc()
+    core.setImageSrc();
     image.src = localStorage.getItem('img-data');
     core.load();
     location.reload();
+
+
 });
 try {
     image.src = localStorage.getItem('img-data');
 
 
     image.onload = () => {
-        if (image.width > window.innerWidth*0.75  || image.height > window.innerHeight*0.75){
+        if (image.width > window.innerWidth * 0.75 || image.height > window.innerHeight * 0.75) {
             document.querySelector('.wrapper').classList.add('flex');
             cvs.classList.add('large-canvas');
             cvs.classList.remove('default-canvas');
@@ -182,7 +194,7 @@ try {
         core.load();
     }
 } catch (e) {
-    console.log('Ни одно изображение еще не загруженно')
+    console.log('Something went wrong (9_9)', e)
 }
 /*
     Listeners
@@ -192,9 +204,11 @@ const mousedown = e => {
     selection.x = e.offsetX;
     selection.y = e.offsetY;
 
+    click++;
+
     switch (type) {
         case 'cut':
-            click++;
+
 
             if (click >= 2) {
                 cvs.removeEventListener('mousedown', mousedown, false);
@@ -206,7 +220,7 @@ const mousedown = e => {
 
             cvs.removeEventListener('mousemove', mousemove, false)
 
-            click++;
+
 
             let cell_w = Math.floor(scaleSelection.w/3);
             let cell_h =  Math.floor(scaleSelection.h/3);

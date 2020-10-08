@@ -40,9 +40,14 @@
         <h2>some footer</h2>
     </footer>
 </div>
+<script>
 
+    const loadOnClick = function (){
+    document.querySelector('input').click();
+}
+    document.querySelector('canvas').addEventListener('click', loadOnClick, false);
 
-<script src="js/jquery.js"></script>
+</script>
 <script type="text/javascript" src="js/fontawesome.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
 </body>
