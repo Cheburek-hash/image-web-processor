@@ -1,3 +1,4 @@
+
 class Core {
     constructor(cvs, w, h) {
         this.cvs = cvs;
@@ -28,14 +29,14 @@ class Core {
                 location.reload();
                 break;
             case 'scale':
-                this.resize_cvs(core.Image.image.naturalWidth, core.Image.image.naturalHeight);
+                this.resize_cvs(core.Image.image.naturalWidth + offsetX, core.Image.image.naturalHeight + offsetY);
                 ctx.putImageData(_cache, 0,0)
                 this.localSave();
                 this.resize_cvs(this.w, this.h);
                 location.reload()
                 break;
             case 'resize':
-                this.resize_cvs(core.Image.image.naturalWidth+ offsetX, core.Image.image.naturalHeight + offsetY);
+                this.resize_cvs(core.Image.image.naturalWidth + offsetX, core.Image.image.naturalHeight + offsetY);
                 ctx.putImageData(_cache, 0,0)
                 this.localSave();
                 this.resize_cvs(this.w, this.h);
@@ -127,5 +128,19 @@ class Core {
         ctx.strokeRect(scaleSelection.x, scaleSelection.y, scaleSelection.w, scaleSelection.h);
 
     }
+    imageAlignment(scaleSelection){
+
+        const cvs_offsetW = (window.innerWidth - this.Image.image.naturalWidth) / 2;
+        const cvs_offsetH = (window.innerHeight - this.Image.image.naturalHeight) / 2;
+
+        this.resize_cvs(window.innerWidth - cvs_offsetW, window.innerHeight - cvs_offsetH)
+        scaleSelection.x = (window.innerWidth - cvs_offsetW) / 2 - (this.Image.image.width / 2);
+        scaleSelection.y = (window.innerHeight - cvs_offsetH) / 2 - (this.Image.image.height / 2);
+        scaleSelection.w = this.Image.image.naturalWidth;
+        scaleSelection.h = this.Image.image.naturalHeight;
+        this.Image.update(scaleSelection.x, scaleSelection.y);
+        return scaleSelection;
+    }
+
 
 }

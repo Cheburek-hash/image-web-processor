@@ -5,13 +5,12 @@ const ctx = cvs.getContext('2d');
 
 const image = new Image();
 
-
 let offsetX = 0,
     offsetY = 0,
     click = 0,
     selection = {},
     type;
-const stepScale = 10,
+let stepScale = 10,
     stepResize = 10,
     scaleSelection = {
         x: 0,
@@ -52,17 +51,9 @@ class ImageOptions {
 
     }
     static resize() {
-        const cvs_offsetW = (window.innerWidth - core.Image.image.naturalWidth) / 2;
-        const cvs_offsetH = (window.innerHeight - core.Image.image.naturalHeight) / 2;
         type = 'resize';
         ctx.lineWidth = 5;
-        core.resize_cvs(window.innerWidth - cvs_offsetW, window.innerHeight - cvs_offsetH)
-        scaleSelection.x = (window.innerWidth - cvs_offsetW) / 2 - (core.Image.image.width / 2);
-        scaleSelection.y = (window.innerHeight - cvs_offsetH) / 2 - (core.Image.image.height / 2);
-        scaleSelection.w = core.Image.image.naturalWidth;
-        scaleSelection.h = core.Image.image.naturalHeight;
-        core.Image.update(scaleSelection.x, scaleSelection.y);
-        // ctx.strokeRect(scaleSelection.x,scaleSelection.y, scaleSelection.w, scaleSelection.h);
+        scaleSelection = core.imageAlignment(scaleSelection);
         cvs.addEventListener('mousedown', mousedown, false);
     }
     static scale() {
@@ -70,16 +61,8 @@ class ImageOptions {
         type = 'scale';
         ctx.lineWidth = 8;
 
-        const cvs_offsetW = (window.innerWidth - core.Image.image.naturalWidth) / 2;
-        const cvs_offsetH = (window.innerHeight - core.Image.image.naturalHeight) / 2;
+        scaleSelection = core.imageAlignment(scaleSelection);
 
-        core.resize_cvs(window.innerWidth - cvs_offsetW, window.innerHeight - cvs_offsetH)
-        scaleSelection.x = (window.innerWidth - cvs_offsetW) / 2 - (core.Image.image.width / 2);
-        scaleSelection.y = (window.innerHeight - cvs_offsetH) / 2 - (core.Image.image.height / 2);
-        scaleSelection.w = core.Image.image.naturalWidth;
-        scaleSelection.h = core.Image.image.naturalHeight;
-
-        core.Image.update(scaleSelection.x, scaleSelection.y);
         ctx.strokeRect(scaleSelection.x, scaleSelection.y, scaleSelection.w, scaleSelection.h);
         cvs.addEventListener('mousedown', mousedown, false);
 
