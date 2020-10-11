@@ -42,6 +42,10 @@ try {
 } catch (e) {
     console.log('Something went wrong (9_9) // Error ->', e)
 }
+
+/**
+ * Image options
+ */
 class ImageOptions {
     static cutting() {
         selection = {};
@@ -68,6 +72,10 @@ class ImageOptions {
 
     }
 }
+
+/**
+ * Image methods
+ */
 class UserImage {
     constructor(image) {
         this.image = image;
@@ -117,6 +125,7 @@ const mousedown = e => {
 
             break;
         case 'resize':
+
             /**
              * Drawing arrows
              */
@@ -134,10 +143,8 @@ const mousedown = e => {
             ctx.stroke();
 
             /**
-             * Collisions
+             * Collisions of arrows
              */
-            // x - arrows
-            //
 
             if ((selection.x > scaleSelection.x - (collisionOffset + (arrowLength + arrowOffset)) && selection.x < scaleSelection.x + arrowLength)) {
                 offsetX -= stepResize;
@@ -145,20 +152,13 @@ const mousedown = e => {
             } else if ((selection.x > scaleSelection.x + scaleSelection.w - arrowLength + (collisionOffset + arrowOffset + (arrowLength - arrowOffset)) && selection.x < scaleSelection.x + scaleSelection.w + arrowLength + collisionOffset + arrowOffset + (arrowLength - arrowOffset)) && (selection.y > scaleSelection.y + scaleSelection.h / 2 - collisionOffset && selection.y < scaleSelection.y + scaleSelection.h / 2 + collisionOffset)) {
                 offsetX += stepResize;
                 core.Image.resize(offsetX, offsetY);
+            } else if ((selection.x > scaleSelection.x + scaleSelection.w / 2 - collisionOffset && selection.x < scaleSelection.x + scaleSelection.w / 2 + collisionOffset) && (selection.y > scaleSelection.y - collisionOffset - arrowLength - arrowOffset && selection.y < scaleSelection.y - collisionOffset)) {
+                offsetY -= stepResize;
+                core.Image.resize(offsetX, offsetY);
+            } else if ((selection.x > scaleSelection.x + scaleSelection.w / 2 - collisionOffset && selection.x < scaleSelection.x + scaleSelection.w / 2 + collisionOffset) && (selection.y > scaleSelection.y + scaleSelection.h + collisionOffset && selection.y < scaleSelection.y + scaleSelection.h + collisionOffset + arrowOffset + arrowLength)) {
+                offsetY += stepResize;
+                core.Image.resize(offsetX, offsetY);
             }
-            // } else if (() && ()){
-            //     offsetY += stepResize;
-            //     core.Image.resize(offsetX, offsetY);
-            // }
-            // else if (() && ()){
-            //     offsetY -= stepResize;
-            //     core.Image.resize(offsetX, offsetY);
-            // }
-            // y - arrows
-
-            ctx.strokeRect(scaleSelection.x + scaleSelection.w / 2 - collisionOffset, scaleSelection.y - collisionOffset - arrowLength - arrowOffset, collisionOffset * 2, arrowLength + arrowOffset);
-            ctx.strokeRect(scaleSelection.x + scaleSelection.w / 2 - collisionOffset, scaleSelection.y + scaleSelection.h + collisionOffset, collisionOffset * 2, collisionOffset * 2);
-
             break
     }
 }
