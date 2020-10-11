@@ -157,7 +157,6 @@ const mousemove = e => {
             ctx.stroke();
             ctx.fillStyle = localStorage.getItem('color');
             ctx.fill();
-            console.log(localStorage.getItem('color'))
     }
 }
 cvs.addEventListener('mouseup', e => {

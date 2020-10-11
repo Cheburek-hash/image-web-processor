@@ -43,7 +43,6 @@ img{
 footer {
     position: absolute;
     width: 100vw;
-    height: 50px;
     bottom: 0;
 }
 footer h2 {
@@ -75,21 +74,4 @@ button:hover{
     left: 50%;
     top: 50%;
     transform: translate(-50%,-50%);
-}
-.close{
-    position: absolute;
-    right: 20%;
-    top: 20%;
-    border: none;
-    border-radius: 2px;
-    z-index: 999;
-}
-.close:hover{
-    background: none;
-    color: red;
-}
-.close::after{
-    content: 'X';
-    display: block;
-    font-size: 24px;
 }
