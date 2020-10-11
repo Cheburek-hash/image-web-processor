@@ -42,7 +42,14 @@ class Core {
                 this.resize_cvs(this.w, this.h);
                 location.reload()
                 break;
+            case 'brush':
+                this.resize_cvs(core.Image.image.naturalWidth + offsetX, core.Image.image.naturalHeight + offsetY);
+                ctx.putImageData(_cache, 0,0)
+                this.localSave();
+                this.resize_cvs(this.w, this.h);
+                location.reload()
         }
+
     }
     localSave(){
         localStorage.setItem('img-data', this.cvs.toDataURL('image/png'))

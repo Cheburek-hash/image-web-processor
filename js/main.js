@@ -9,13 +9,15 @@ let offsetX = 0,
     offsetY = 0,
     click = 0,
     selection = {},
-    type;
-let stepScale = 10,
-    stepResize = 10,
     scaleSelection = {
         x: 0,
         y: 0
-    };
+    },
+    type;
+const stepScale = 10,
+    stepResize = 10,
+    BRUSH_RADIUS = 10;
+
 
 if (localStorage.length > 0) cvs.removeEventListener('click', loadOnClick, false)
 
@@ -52,7 +54,6 @@ class ImageOptions {
         type = 'cut';
         cvs.addEventListener('mousedown', mousedown, false);
         cvs.addEventListener('mousemove', mousemove, false);
-
     }
     static resize() {
         type = 'resize';
@@ -64,12 +65,14 @@ class ImageOptions {
         selection = {};
         type = 'scale';
         ctx.lineWidth = 8;
-
         scaleSelection = core.imageAlignment(scaleSelection);
-
         ctx.strokeRect(scaleSelection.x, scaleSelection.y, scaleSelection.w, scaleSelection.h);
         cvs.addEventListener('mousedown', mousedown, false);
-
+    }
+    static brush(){
+        type = 'brush';
+        scaleSelection = core.imageAlignment(scaleSelection);
+        cvs.addEventListener('mousedown', mousedown, false);
     }
 }
 
@@ -122,7 +125,6 @@ const mousedown = e => {
         case 'scale':
             cvs.removeEventListener('mousemove', mousemove, false)
             core._mesh(selection, scaleSelection);
-
             break;
         case 'resize':
 
@@ -159,7 +161,10 @@ const mousedown = e => {
                 offsetY += stepResize;
                 core.Image.resize(offsetX, offsetY);
             }
-            break
+            break;
+        case 'brush':
+            cvs.addEventListener('mousemove', mousemove, false)
+            break;
     }
 }
 
@@ -174,7 +179,19 @@ const mousemove = e => {
         case 'scale':
             scaleSelection.x = e.offsetX - core.Image.image.width / 2;
             scaleSelection.y = e.offsetY - core.Image.image.height / 2;
-
             core.Image.update(e.offsetX - core.Image.image.width / 2, e.offsetY - core.Image.image.height / 2)
+            break;
+        case 'brush':
+            ctx.beginPath();
+            ctx.arc(e.offsetX, e.offsetY, BRUSH_RADIUS, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fillStyle = '#000000';
+            ctx.fill();
     }
 }
+cvs.addEventListener('mouseup', e => {
+    switch (type) {
+        case 'brush':
+            cvs.removeEventListener('mousemove', mousemove, false)
+    }
+});
