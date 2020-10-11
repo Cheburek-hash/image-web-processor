@@ -45,36 +45,6 @@ try {
     console.log('Something went wrong (9_9) // Error ->', e)
 }
 
-/**
- * Image options
- */
-class ImageOptions {
-    static cutting() {
-        selection = {};
-        type = 'cut';
-        cvs.addEventListener('mousedown', mousedown, false);
-        cvs.addEventListener('mousemove', mousemove, false);
-    }
-    static resize() {
-        type = 'resize';
-        ctx.lineWidth = 5;
-        scaleSelection = core.imageAlignment(scaleSelection);
-        cvs.addEventListener('mousedown', mousedown, false);
-    }
-    static scale() {
-        selection = {};
-        type = 'scale';
-        ctx.lineWidth = 8;
-        scaleSelection = core.imageAlignment(scaleSelection);
-        ctx.strokeRect(scaleSelection.x, scaleSelection.y, scaleSelection.w, scaleSelection.h);
-        cvs.addEventListener('mousedown', mousedown, false);
-    }
-    static brush(){
-        type = 'brush';
-        scaleSelection = core.imageAlignment(scaleSelection);
-        cvs.addEventListener('mousedown', mousedown, false);
-    }
-}
 
 /**
  * Image methods
@@ -185,8 +155,9 @@ const mousemove = e => {
             ctx.beginPath();
             ctx.arc(e.offsetX, e.offsetY, BRUSH_RADIUS, 0, 2 * Math.PI);
             ctx.stroke();
-            ctx.fillStyle = '#000000';
+            ctx.fillStyle = localStorage.getItem('color');
             ctx.fill();
+            console.log(localStorage.getItem('color'))
     }
 }
 cvs.addEventListener('mouseup', e => {

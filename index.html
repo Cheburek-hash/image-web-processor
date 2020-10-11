@@ -21,9 +21,9 @@
         <div class="image-tools">
             <h3>Options</h3>
             <button type="button" onclick="ImageOptions.cutting();"><i class="fas fa-cut"></i></button>
-            <button type="button" onclick="ImageOptions.scale();"><i class="fas fa-search-plus"></i></i></button>
-            <button type="button" onclick="ImageOptions.resize();"><i class="fas fa-expand"></i></i></i></button>
-            <button type="button" onclick="ImageOptions.brush();"><i class="fas fa-paint-brush"></i></i></i></button>
+            <button type="button" onclick="ImageOptions.scale();"><i class="fas fa-search-plus"></i></button>
+            <button type="button" onclick="ImageOptions.resize();"><i class="fas fa-expand"></i></button>
+            <button type="button" class="brush"><i class="fas fa-paint-brush"></i></button>
         </div>
         <div class="image-functions">
             <h3>Functions</h3>
@@ -41,16 +41,44 @@
         <h2>some footer</h2>
     </footer>
 </div>
+<script type="text/javascript" src="js/classes/Gradient.js"></script>
+<script type="text/javascript" src="js/classes/Image.js"></script>
 <script>
+    let COLOR;
+    const GRADIENT = new Gradient(550,550);
+    GRADIENT.createWindow();
+
 
     const loadOnClick = function (){
-    document.querySelector('input').click();
-}
-    document.querySelector('canvas').addEventListener('click', loadOnClick, false);
+        document.querySelector('input').click();
+    }
+    const onclick = function (){
+        GRADIENT.showWindow();
+        GRADIENT.setColor();
+        GRADIENT.update();
+    }
+    GRADIENT.cvs.addEventListener('mousemove', e => {
+        GRADIENT.update();
+        GRADIENT.ctx.strokeRect(e.offsetX-10, e.offsetY - 10, 20, 20)
+        COLOR = GRADIENT.currentColor(e.offsetX, e.offsetY);
 
+        GRADIENT.ctx.strokeRect(0,0,100,100)
+        GRADIENT.ctx.fillStyle = `rgb(${COLOR})`;
+        GRADIENT.ctx.fillRect(0,0,100,100);
+
+    }, false);
+    GRADIENT.cvs.addEventListener('click', () => {
+        localStorage.setItem('color', `rgb(${COLOR})`);
+        GRADIENT.cvs.remove();
+        ImageOptions.brush();
+    }, false);
+    document.querySelector('canvas').addEventListener('click', loadOnClick, false);
+    document.querySelector('.brush').addEventListener('click', onclick, false);
 </script>
 <script type="text/javascript" src="js/libs/fontawesome.js"></script>
 <script type="text/javascript" src="js/classes/Core.js"></script>
+
 <script type="text/javascript" src="js/main.js"></script>
+
 </body>
 </html>
